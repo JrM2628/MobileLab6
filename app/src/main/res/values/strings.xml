@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">lab6</string>
+    <string name="acct_name">Lab 6 Account</string>
+    <string name="acct_type">me.mclellan.lab6user</string>
+</resources>
