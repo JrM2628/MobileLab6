@@ -43,10 +43,10 @@ public class MainActivity extends AppCompatActivity {
         String passwordString = pw.getEditableText().toString();
         if(authenticateUser(usernameString, passwordString)) {
             Intent intent = new Intent(this, Activity3.class);
-            intent.putExtra(this.EXTRA_MESSAGE, usernameString);
+            intent.putExtra(EXTRA_MESSAGE, usernameString);
             startActivity(intent);
         } else {
-            //Toast.makeText(getApplicationContext(), "Authentication failure", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Authentication failure", Toast.LENGTH_SHORT).show();
         }
     }
 

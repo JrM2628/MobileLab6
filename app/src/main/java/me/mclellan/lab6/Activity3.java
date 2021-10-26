@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,7 +79,7 @@ public class Activity3 extends AppCompatActivity {
     }
 
     public BiometricPrompt invokeBiometricPrompt(Executor ex){
-        BiometricPrompt prompt = new BiometricPrompt(this, ex, new BiometricPrompt.AuthenticationCallback() {
+        return new BiometricPrompt(this, ex, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
@@ -97,7 +98,6 @@ public class Activity3 extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Auth Failure", Toast.LENGTH_LONG).show();
             }
         });
-        return prompt;
     }
 
     public void authenticate(View v) {
@@ -112,7 +112,7 @@ public class Activity3 extends AppCompatActivity {
         Account account = getAccount(this.userName);
         String keyAlias = this.m.getUserData(account, MainActivity.KEY_ALIAS);
 
-        KeyStore ks = null;
+        KeyStore ks;
         try {
             ks = KeyStore.getInstance("AndroidKeyStore");
             ks.load(null);
@@ -127,22 +127,13 @@ public class Activity3 extends AppCompatActivity {
             kg.init(keySpec);
             kg.generateKey();
             Toast.makeText(getApplicationContext(), "New key added successfully", Toast.LENGTH_SHORT).show();
-        } catch (IOException e){
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
+        } catch (IOException | CertificateException | NoSuchAlgorithmException |
+                InvalidAlgorithmParameterException | NoSuchProviderException | KeyStoreException e){
             e.printStackTrace();
         }
     }
 
-    public void encrypt(View v){
+    public void encrypt(View v) {
         try{
             String path = getFilesDir().toString();
             EditText edtFileName = (EditText)findViewById(R.id.fileName);
@@ -155,14 +146,15 @@ public class Activity3 extends AppCompatActivity {
 
             byte[] iv;
             byte[] cipherText;
-            /*
-                fetch keystore service
-                fetch the key
-                do the encryption
-                save IV to a file
-            */
+
+            //fetch keystore service, fetch the key, do the encryption, save IV to a file
             KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
             ks.load(null);
+
+            if(!ks.containsAlias(keyAlias)){
+                Toast.makeText(getApplicationContext(), "Key alias not found", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             SecretKey k = ((KeyStore.SecretKeyEntry)ks.getEntry(keyAlias, null)).getSecretKey();
             Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
@@ -186,26 +178,12 @@ public class Activity3 extends AppCompatActivity {
             BiometricPrompt prompt = invokeBiometricPrompt(ex);
             BiometricPrompt.PromptInfo details = createBiometricPrompt();
             prompt.authenticate(details);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException |
+                UnrecoverableEntryException | NoSuchPaddingException | InvalidKeyException |
+                BadPaddingException | IllegalBlockSizeException e) {
             e.printStackTrace();
         }
-        }
+    }
 
 
     public void decrypt(View v){
@@ -233,6 +211,7 @@ public class Activity3 extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Key alias not found", Toast.LENGTH_LONG).show();
                 return;
             }
+
             SecretKey k = ((KeyStore.SecretKeyEntry)ks.getEntry(keyAlias, null)).getSecretKey();
             File ivFile = new File(path + File.separator + fileName + "_iv");
             if(ivFile.exists()){
@@ -251,7 +230,7 @@ public class Activity3 extends AppCompatActivity {
 
             try {
                 plainText = c.doFinal(cipherText);
-                String readablePlaintext = new String(plainText, "UTF-8");
+                String readablePlaintext = new String(plainText, StandardCharsets.UTF_8);
                 edtData.setText(readablePlaintext);
             } catch (AEADBadTagException e){
                 Toast.makeText(getApplicationContext(), "Error decrypting file. Did you generate a new key?", Toast.LENGTH_LONG).show();
@@ -261,26 +240,11 @@ public class Activity3 extends AppCompatActivity {
             BiometricPrompt prompt = invokeBiometricPrompt(ex);
             BiometricPrompt.PromptInfo details = createBiometricPrompt();
             prompt.authenticate(details);
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        } catch (CertificateException certificateException) {
-            certificateException.printStackTrace();
-        } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
-            noSuchAlgorithmException.printStackTrace();
-        } catch (KeyStoreException keyStoreException) {
-            keyStoreException.printStackTrace();
-        } catch (NoSuchPaddingException noSuchPaddingException) {
-            noSuchPaddingException.printStackTrace();
-        } catch (UnrecoverableEntryException unrecoverableEntryException) {
-            unrecoverableEntryException.printStackTrace();
-        } catch (InvalidKeyException invalidKeyException) {
-            invalidKeyException.printStackTrace();
-        } catch (InvalidAlgorithmParameterException invalidAlgorithmParameterException) {
-            invalidAlgorithmParameterException.printStackTrace();
-        } catch (BadPaddingException badPaddingException) {
-            badPaddingException.printStackTrace();
-        } catch (IllegalBlockSizeException illegalBlockSizeException) {
-            illegalBlockSizeException.printStackTrace();
+        } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException |
+                NoSuchPaddingException | UnrecoverableEntryException | InvalidKeyException |
+                InvalidAlgorithmParameterException | BadPaddingException |
+                IllegalBlockSizeException e) {
+            e.printStackTrace();
         }
     }
 

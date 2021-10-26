@@ -33,7 +33,7 @@ public class Activity2 extends AppCompatActivity {
     }
 
     public boolean addKey(String keyAlias) {
-        KeyStore ks = null;
+        KeyStore ks;
         try {
             ks = KeyStore.getInstance("AndroidKeyStore");
             ks.load(null);
@@ -53,17 +53,9 @@ public class Activity2 extends AppCompatActivity {
                 // Keystore already contains alias
                 return false;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
+        } catch (IOException | CertificateException | NoSuchAlgorithmException |
+                InvalidAlgorithmParameterException | NoSuchProviderException |
+                KeyStoreException e) {
             e.printStackTrace();
         }
         return false;
@@ -71,7 +63,6 @@ public class Activity2 extends AppCompatActivity {
 
 
     public Account addUser(String user, String password){
-        //Register account type = new XML file
         Account account = new Account(user, "me.mclellan.lab6user");
         if(this.m.addAccountExplicitly(account, password, null))
             return account;
