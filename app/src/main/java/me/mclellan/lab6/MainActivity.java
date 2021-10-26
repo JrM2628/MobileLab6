@@ -13,6 +13,10 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
 
+    public static final String EXTRA_MESSAGE = "username";
+    public static final String KEY_ALIAS = "alias";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         Account[] accounts = am.getAccountsByType("me.mclellan.lab6user");
         for (Account a : accounts) {
             if (a.name.equals(user)) {
-                Toast.makeText(getApplicationContext(), "Authentication failed: incorrect password", Toast.LENGTH_LONG).show();
                 return am.getPassword(a).equals(password);
             }
         }
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         String passwordString = pw.getEditableText().toString();
         if(authenticateUser(usernameString, passwordString)) {
             Intent intent = new Intent(this, Activity3.class);
+            intent.putExtra(this.EXTRA_MESSAGE, usernameString);
             startActivity(intent);
         } else {
             //Toast.makeText(getApplicationContext(), "Authentication failure", Toast.LENGTH_SHORT).show();

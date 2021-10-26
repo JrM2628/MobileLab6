@@ -23,11 +23,13 @@ import java.security.cert.CertificateException;
 import javax.crypto.KeyGenerator;
 
 public class Activity2 extends AppCompatActivity {
+    private AccountManager m;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_2);
+        this.m = AccountManager.get(this);
     }
 
     public boolean addKey(String keyAlias) {
@@ -68,21 +70,27 @@ public class Activity2 extends AppCompatActivity {
     }
 
 
-    public boolean addUser(String user, String password){
-        AccountManager m = AccountManager.get(this);
+    public Account addUser(String user, String password){
         //Register account type = new XML file
         Account account = new Account(user, "me.mclellan.lab6user");
-        return m.addAccountExplicitly(account, password, null);
+        if(this.m.addAccountExplicitly(account, password, null))
+            return account;
+        return null;
     }
 
     public void createUser(View v){
         EditText user = (EditText) findViewById(R.id.userAct2);
         EditText pw = (EditText) findViewById(R.id.passwordAct2);
-        if(addUser(user.getEditableText().toString(), pw.getEditableText().toString())){
+        String userString = user.getEditableText().toString();
+        String pwString = pw.getEditableText().toString();
+        Account account = addUser(userString, pwString);
+        if(account != null) {
             Toast.makeText(getApplicationContext(), "Added user", Toast.LENGTH_SHORT).show();
-            if(addKey(user.getEditableText().toString())) {
+            if(addKey(userString)) {
                 Toast.makeText(getApplicationContext(), "Key added successfully", Toast.LENGTH_SHORT).show();
+                this.m.setUserData(account, MainActivity.KEY_ALIAS, userString);
                 Intent intent = new Intent(this, Activity3.class);
+                intent.putExtra(MainActivity.EXTRA_MESSAGE, user.getEditableText().toString());
                 startActivity(intent);
             } else {
                 Toast.makeText(getApplicationContext(), "Key failed to add", Toast.LENGTH_SHORT).show();
