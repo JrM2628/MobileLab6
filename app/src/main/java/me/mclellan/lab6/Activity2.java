@@ -22,8 +22,14 @@ import java.security.cert.CertificateException;
 
 import javax.crypto.KeyGenerator;
 
+/*
+Jake McLellan
+Account creation activity. Creates an account and generates a corresponding key.
+*/
 public class Activity2 extends AppCompatActivity {
+
     private AccountManager m;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,11 @@ public class Activity2 extends AppCompatActivity {
         this.m = AccountManager.get(this);
     }
 
+
+    /*
+        Creates a key and adds to the AndroidKeyStore using the paramater keyAlias as the alias
+        Returns true if the key generates successfully, false otherwise
+     */
     public boolean addKey(String keyAlias) {
         KeyStore ks;
         try {
@@ -62,14 +73,24 @@ public class Activity2 extends AppCompatActivity {
     }
 
 
-    public Account addUser(String user, String password){
+    /*
+        Creates an account of type me.mclellan.lab6user using the given username and password
+        Returns the account if successful, null otherwise
+     */
+    public Account addUser(String user, String password) {
         Account account = new Account(user, "me.mclellan.lab6user");
         if(this.m.addAccountExplicitly(account, password, null))
             return account;
         return null;
     }
 
-    public void createUser(View v){
+
+    /*
+        Handles the user creation button click
+        Gives an error message if the account/key creation was unsuccessful
+        Launches activity 3 if successful
+    */
+    public void createUser(View v) {
         EditText user = (EditText) findViewById(R.id.userAct2);
         EditText pw = (EditText) findViewById(R.id.passwordAct2);
         String userString = user.getEditableText().toString();

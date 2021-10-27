@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lab6">
 
-
         <service
             android:name=".AccountServ"
             android:enabled="true"
@@ -25,7 +24,6 @@
                 android:resource="@xml/authenticator"
                 />
         </service>
-
         <activity
             android:name=".Activity3"
             android:exported="true" />
@@ -37,10 +35,8 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

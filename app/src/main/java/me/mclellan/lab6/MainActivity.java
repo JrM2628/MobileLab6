@@ -10,8 +10,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/*
+Jake McLellan
+Main landing page for the app. Allows users to enter credentials to log in, or create an account
+*/
 public class MainActivity extends AppCompatActivity {
-
 
     public static final String EXTRA_MESSAGE = "username";
     public static final String KEY_ALIAS = "alias";
@@ -24,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /*
+        Returns true if the user and password match an existing user of type "me.mclellan.lab6user"
+        Returns false otherwise
+     */
     public boolean authenticateUser(String user, String password) {
         AccountManager am = (AccountManager) getSystemService(ACCOUNT_SERVICE);
         Account[] accounts = am.getAccountsByType("me.mclellan.lab6user");
@@ -36,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public void authenticateUser(View v){
+
+    /*
+        Handles the authentication button click
+     */
+    public void authenticateUser(View v) {
         EditText user = (EditText) findViewById(R.id.username);
         EditText pw = (EditText) findViewById(R.id.password);
         String usernameString = user.getEditableText().toString();
@@ -50,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    /*
+        Launches activity 2
+     */
     public void launchActivity2(View v) {
         Intent intent = new Intent(this, Activity2.class);
         startActivity(intent);

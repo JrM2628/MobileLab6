@@ -43,10 +43,15 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 
+/*
+Jake McLellan
+Core functionality of the app. Handles file encryption, decryption, and key regeneration.
+*/
 public class Activity3 extends AppCompatActivity {
 
     private String userName;
     private AccountManager m;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,12 @@ public class Activity3 extends AppCompatActivity {
         this.m = AccountManager.get(this);
     }
 
-    private Account getAccount(String userName){
+
+    /*
+        Gets account of type me.mclellan.lab6user by username
+        Returns account, or null if not found
+     */
+    private Account getAccount(String userName) {
         Account[] accounts = this.m.getAccountsByType("me.mclellan.lab6user");
         for (Account a : accounts) {
             if (a.name.equals(userName)) {
@@ -67,7 +77,11 @@ public class Activity3 extends AppCompatActivity {
         return null;
     }
 
-    public BiometricPrompt.PromptInfo createBiometricPrompt(){
+
+    /*
+        Returns BiometricPrompt.PromptInfo
+     */
+    public BiometricPrompt.PromptInfo createBiometricPrompt() {
         return new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Lab 6")
                 .setSubtitle("Please provide your pin, password, etc.")
@@ -78,7 +92,11 @@ public class Activity3 extends AppCompatActivity {
                 .build();
     }
 
-    public BiometricPrompt invokeBiometricPrompt(Executor ex){
+
+    /*
+        Returns BiometricPrompt
+     */
+    public BiometricPrompt invokeBiometricPrompt(Executor ex) {
         return new BiometricPrompt(this, ex, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
@@ -100,6 +118,10 @@ public class Activity3 extends AppCompatActivity {
         });
     }
 
+
+    /*
+        Handles the GUI elements for authenticating a user when the authenticate button is clicked
+     */
     public void authenticate(View v) {
         Executor ex = ContextCompat.getMainExecutor(this);
         BiometricPrompt prompt = invokeBiometricPrompt(ex);
@@ -108,7 +130,11 @@ public class Activity3 extends AppCompatActivity {
     }
 
 
-    public void generateNewKey(View v){
+    /*
+        Handles the button click for generating a new key
+        Gets the alias from the userdata and creates a new key in the AndroidKeyStore under that same alias
+     */
+    public void generateNewKey(View v) {
         Account account = getAccount(this.userName);
         String keyAlias = this.m.getUserData(account, MainActivity.KEY_ALIAS);
 
@@ -133,6 +159,11 @@ public class Activity3 extends AppCompatActivity {
         }
     }
 
+
+    /*
+        Handles the button click for encrypting a file
+        Fetches the key from the AndroidKeyStore and writes the encrypted data/IV to their respective files
+     */
     public void encrypt(View v) {
         try{
             String path = getFilesDir().toString();
@@ -186,6 +217,12 @@ public class Activity3 extends AppCompatActivity {
     }
 
 
+    /*
+        Handles the button click for decrypting a file
+        Fetches the key from the AndroidKeyStore
+        Reads in the IV bytes
+        Decrypts the file and writes the content to the editText buffer for data
+     */
     public void decrypt(View v){
         String path = getFilesDir().toString();
         try{
@@ -247,5 +284,4 @@ public class Activity3 extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 }

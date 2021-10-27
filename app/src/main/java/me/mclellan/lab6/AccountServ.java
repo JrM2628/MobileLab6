@@ -3,6 +3,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+/*
+Jake McLellan
+Required class for programatically creating user accounts
+ */
 public class AccountServ extends Service {
     public AccountServ() {
     }
